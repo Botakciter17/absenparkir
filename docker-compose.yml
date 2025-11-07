@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  absensi-app:
+    build: .
+    container_name: absensi-piket
+    ports:
+      - "8083:8083"
+    volumes:
+      # Mount database agar persistent
+      - ./database.db:/app/database.db
+      # Mount uploads folder agar persistent
+      - ./uploads:/app/uploads
+      # Mount templates jika ada perubahan
+      - ./templates:/app/templates
+      # Mount static files jika ada
+      - ./static:/app/static
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - absensi-network
+
+networks:
+  absensi-network:
+    driver: bridge
