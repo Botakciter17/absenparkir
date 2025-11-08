@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin - Absensi</title>
-   <style>
+  <title>Admin Dashboard - Absensi Piket</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
     * {
       margin: 0;
       padding: 0;
@@ -13,7 +16,7 @@
     
     body {
       background: #fef9e7;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-family: 'Roboto', sans-serif;
       background-image: 
         repeating-linear-gradient(0deg, transparent, transparent 31px, #e8dcc4 31px, #e8dcc4 32px),
         repeating-linear-gradient(90deg, transparent, transparent 31px, #e8dcc4 31px, #e8dcc4 32px);
@@ -23,37 +26,23 @@
     nav {
       background: white;
       border-bottom: 3px solid #333;
-      border-bottom-style: dashed;
       padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
-      position: relative;
-    }
-    
-    nav::after {
-      content: '✏️';
-      position: absolute;
-      right: 100px;
-      font-size: 20px;
-      animation: float 3s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+      flex-wrap: wrap;
+      gap: 10px;
     }
     
     .navbar-brand {
-      font-family: 'Permanent Marker', cursive;
-      font-size: 24px;
+      font-size: clamp(18px, 4vw, 24px);
       color: #e74c3c;
-      transform: rotate(-2deg);
+      font-weight: bold;
     }
     
     .btn {
-      font-family: 'Indie Flower', cursive;
+      font-family: 'Roboto', sans-serif;
       padding: 8px 20px;
       border: 3px solid #333;
       background: white;
@@ -61,14 +50,14 @@
       font-size: 16px;
       font-weight: bold;
       transition: all 0.2s;
-      position: relative;
       text-decoration: none;
       color: #333;
       display: inline-block;
+      margin-left: 5px;
     }
     
     .btn:hover {
-      transform: translate(-3px, -3px);
+      transform: translate(-2px, -2px);
       box-shadow: 3px 3px 0 #333;
     }
     
@@ -79,13 +68,32 @@
     .btn-success {
       background: #2ecc71;
       color: white;
-      width: 100%;
+    }
+    
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .btn-warning {
+      background: #f39c12;
+      color: white;
+    }
+    
+    .btn-info {
+      background: #3498db;
+      color: white;
+    }
+    
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 14px;
     }
     
     .container {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 0 15px;
     }
     
     .alert {
@@ -93,125 +101,90 @@
       margin-bottom: 20px;
       border: 3px solid #333;
       background: #fff9c4;
-      font-size: 18px;
-      transform: rotate(-1deg);
+      font-size: 16px;
       box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+      border-radius: 5px;
     }
     
-    .alert::before {
-      content: '⚠️ ';
+    .alert-success {
+      background: #d4edda;
+      border-color: #2ecc71;
+    }
+    
+    .alert-danger {
+      background: #f8d7da;
+      border-color: #e74c3c;
+    }
+    
+    .alert-info {
+      background: #d1ecf1;
+      border-color: #3498db;
     }
     
     .card {
       background: white;
       border: 3px solid #333;
-      padding: 25px;
+      padding: 20px;
       margin-bottom: 25px;
       box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
-      position: relative;
-    }
-    
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -8px;
-      right: 20px;
-      width: 30px;
-      height: 20px;
-      background: #e74c3c;
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      border-radius: 10px;
     }
     
     h5 {
-      font-family: 'Permanent Marker', cursive;
-      font-size: 26px;
+      font-size: clamp(20px, 4vw, 26px);
       color: #e74c3c;
       margin-bottom: 20px;
-      transform: rotate(-1deg);
-      display: inline-block;
-    }
-    
-    h5::after {
-      content: '';
-      display: block;
-      height: 3px;
-      background: #333;
-      margin-top: 5px;
-      animation: underlineDraw 1s ease-out;
-    }
-    
-    @keyframes underlineDraw {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-    
-    .form-control {
-      padding: 12px;
-      border: 3px solid #333;
-      background: white;
-      font-family: 'Indie Flower', cursive;
-      font-size: 16px;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-    
-    .form-control:focus {
-      outline: none;
-      background: #fffacd;
-    }
-    
-    form.row {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    
-    .col-12 {
-      flex: 1 1 100%;
-    }
-    
-    @media (min-width: 768px) {
-      .col-md-9 {
-        flex: 1 1 calc(75% - 8px);
-      }
-      .col-md-3 {
-        flex: 1 1 calc(25% - 8px);
-      }
+      font-weight: bold;
     }
     
     table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+      border-collapse: collapse;
       margin-top: 15px;
+      font-size: 13px;
     }
     
     th {
       background: #3498db;
       color: white;
-      padding: 12px;
+      padding: 10px 8px;
       text-align: left;
-      border: 3px solid #333;
-      font-family: 'Permanent Marker', cursive;
-      font-size: 18px;
+      border: 2px solid #333;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     
     td {
-      padding: 12px;
-      border: 2px solid #333;
+      padding: 10px 8px;
+      border: 2px solid #ddd;
       background: white;
+      word-break: break-word;
     }
     
     tr:nth-child(even) td {
-      background: #ecf0f1;
+      background: #f8f9fa;
     }
     
     .badge {
       display: inline-block;
-      padding: 5px 12px;
+      padding: 4px 8px;
       border: 2px solid #333;
       font-weight: bold;
-      transform: rotate(-2deg);
+      font-size: 11px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    
+    .badge-hadir {
+      background: #17a2b8;
+      color: white;
+    }
+    
+    .badge-izin {
+      background: #ffc107;
+      color: #333;
     }
     
     .bg-success {
@@ -231,7 +204,6 @@
     
     a {
       color: #3498db;
-      text-decoration: underline wavy;
     }
     
     a:hover {
@@ -240,30 +212,130 @@
     
     .table-responsive {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     
-    /* Doodle decorations */
-    .card::after {
-      content: '📎';
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      transform: rotate(45deg);
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    
+    .text-truncate {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border: 3px solid #333;
+      border-radius: 10px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow: auto;
+    }
+    
+    .modal-close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 20px;
+    }
+    
+    .modal-img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 10px auto;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      nav {
+        padding: 10px 15px;
+      }
+      
+      .container {
+        padding: 0 10px;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+      
+      table {
+        font-size: 11px;
+      }
+      
+      th, td {
+        padding: 6px 4px;
+      }
+      
+      .btn {
+        padding: 6px 12px;
+        font-size: 13px;
+        margin-left: 0;
+        margin-top: 5px;
+      }
+      
+      .btn-sm {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .navbar-brand {
+        font-size: 16px;
+      }
+      
+      h5 {
+        font-size: 18px;
+      }
     }
   </style>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
-<div class="container my-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Admin Dashboard</h3>
-    <div>
-      <a class="btn btn-secondary me-2" href="/">Home</a>
-      <a class="btn btn-danger" href="/logout">Logout</a>
-    </div>
+<body>
+<nav>
+  <span class="navbar-brand">👨‍💼 Admin Dashboard</span>
+  <div class="nav-buttons">
+    <a class="btn btn-warning btn-sm" href="/admin/cleanup" 
+       onclick="return confirm('Yakin ingin membersihkan data lama dan upload ke backup?')">
+      🗑️ Cleanup
+    </a>
+    <a class="btn btn-outline-secondary" href="/logout">Logout</a>
   </div>
+</nav>
 
+<div class="container">
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, msg in messages %}
@@ -272,63 +344,136 @@
     {% endif %}
   {% endwith %}
 
-  <div class="table-responsive">
-    <table class="table table-striped align-middle">
-      <thead>
-        <tr>
-          <th>ID</th><th>Nama</th><th>Foto</th><th>Tanggal</th><th>EXIF</th><th>GPS</th><th>Status</th><th>Alasan</th><th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in absensi %}
-        <tr>
-          <td>{{ row['id'] }}</td>
-          <td>{{ row['nama'] }}</td>
-          <td>
-            <img src="/uploads/{{ row['filename'] }}" class="img-thumbnail" style="max-width:120px; cursor:pointer"
-                 data-bs-toggle="modal" data-bs-target="#imgModal{{row['id']}}">
-          </td>
-          <td>{{ row['tanggal'] }}</td>
-          <td>
-            <button class="btn btn-sm btn-info" onclick="alert(`{{ row['exif_text']|replace('\n','\\n') }}`)">Lihat EXIF</button>
-          </td>
-          <td>{{ row['latitude'] }}, {{ row['longitude'] }}</td>
-          <td>
-            {% if row['status'] == 'Disetujui' %}
-              <span class="badge bg-success">Disetujui</span>
-            {% elif row['status'] == 'Pending' %}
-              <span class="badge bg-warning text-dark">Pending</span>
-            {% else %}
-              <span class="badge bg-danger">Ditolak</span>
-            {% endif %}
-          </td>
-          <td>{{ row['alasan'] }}</td>
-          <td>
-            {% if row['status'] != 'Disetujui' %}
-              <a href="/approve/{{row['id']}}" class="btn btn-sm btn-success mb-1 w-100">Setujui</a>
-            {% else %}
-              <a href="/reject/{{row['id']}}" class="btn btn-sm btn-danger mb-1 w-100">Tolak</a>
-            {% endif %}
-          </td>
-        </tr>
+  <div class="card">
+    <h5>📋 Data Absensi Semua Petugas</h5>
+    <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+      💡 Foto otomatis dihapus setiap ganti hari dan dibackup ke server
+    </p>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Foto</th>
+            <th>Tanggal</th>
+            <th>Jenis</th>
+            <th>Status</th>
+            <th>Keterangan</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in absensi %}
+            <tr>
+              <td>{{ r['id'] }}</td>
+              <td>{{ r['nama'] }}</td>
+              <td>
+               <a href="#" class="show-image-btn" data-file="{{ '/uploads/' + r['filename'] }}">Lihat Gambar</a>
+              </td>
+              <td>{{ r['tanggal'] }}</td>
+              <td>
+                {% if r['jenis'] == 'izin' %}
+                  <span class="badge badge-izin">Izin</span>
+                {% else %}
+                  <span class="badge badge-hadir">Hadir</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if r['status'] == 'Disetujui' %}
+                  <span class="badge bg-success">✓ Disetujui</span>
+                {% elif r['status'] == 'Pending' %}
+                  <span class="badge bg-warning">⏳ Pending</span>
+                {% else %}
+                  <span class="badge bg-danger">✗ Ditolak</span>
+                {% endif %}
+              </td>
+              <td style="max-width: 250px;">
+                {% if r['jenis'] == 'izin' and r['keterangan_izin'] %}
+                  <strong>Keterangan Izin:</strong><br>
+                  <em>{{ r['keterangan_izin'] }}</em>
+                  <hr style="margin: 5px 0; border: 1px dashed #ddd;">
+                {% endif %}
+                <small>{{ r['alasan'] or '-' }}</small>
+                {% if r['latitude'] and r['longitude'] %}
+                  <br><small style="color: #666;">
+                    📍 {{ "%.4f"|format(r['latitude']) }}, {{ "%.4f"|format(r['longitude']) }}
+                  </small>
+                {% endif %}
+              </td>
+              <td>
+                <div class="action-buttons">
+                  {% if r['status'] != 'Disetujui' %}
+                    <a href="/approve/{{ r['id'] }}" class="btn btn-success btn-sm">✓</a>
+                  {% endif %}
+                  {% if r['status'] != 'Ditolak' %}
+                    <a href="/reject/{{ r['id'] }}" class="btn btn-danger btn-sm">✗</a>
+                  {% endif %}
+                  {% if r['exif_text'] %}
+                     <button class="btn btn-info btn-sm" 
+                             data-exif="{{ r['exif_text']|tojson }}" 
+                             onclick="showExif(this.dataset.exif)">
+    ℹ️
+                     </button>
 
-        <!-- modal zoom -->
-        <div class="modal fade" id="imgModal{{row['id']}}" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-body text-center">
-                <img src="/uploads/{{ row['filename'] }}" class="img-fluid">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {% endfor %}
-      </tbody>
-    </table>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Modal for Image -->
+<div id="imageModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('imageModal')">&times;</span>
+    <img id="modalImage" class="modal-img" src="" alt="Foto Absensi">
+  </div>
+</div>
+
+<!-- Modal for EXIF -->
+<div id="exifModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal('exifModal')">&times;</span>
+    <h5>📄 Data EXIF</h5>
+    <pre id="exifData" style="background: #f8f9fa; padding: 15px; border: 2px solid #ddd; border-radius: 5px; overflow: auto; max-height: 70vh; font-size: 12px;"></pre>
+  </div>
+</div>
+
+<script>
+function showImage(src) {
+  document.getElementById('modalImage').src = src;
+  document.getElementById('imageModal').classList.add('active');
+}
+
+function showExif(data) {
+  document.getElementById('exifData').textContent = data;
+  document.getElementById('exifModal').classList.add('active');
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).classList.remove('active');
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.classList.remove('active');
+  }
+}
+
+document.querySelectorAll('.show-image-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+        e.preventDefault();
+        const file = btn.dataset.file;
+        showImage(file);
+    });
+});
+
+</script>
 </body>
 </html>
