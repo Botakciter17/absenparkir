@@ -1,336 +1,57 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Admin Dashboard - Absensi Piket</title>
-  
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      background:#fef9e7;font-family:'Roboto',sans-serif;
+      background-image:
+        repeating-linear-gradient(0deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px),
+        repeating-linear-gradient(90deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px);
+      min-height:100vh
     }
-    
-    body {
-      background: #fef9e7;
-      font-family: 'Roboto', sans-serif;
-      background-image: 
-        repeating-linear-gradient(0deg, transparent, transparent 31px, #e8dcc4 31px, #e8dcc4 32px),
-        repeating-linear-gradient(90deg, transparent, transparent 31px, #e8dcc4 31px, #e8dcc4 32px);
-      min-height: 100vh;
-    }
-    
-    nav {
-      background: white;
-      border-bottom: 3px solid #333;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    
-    .navbar-brand {
-      font-size: clamp(18px, 4vw, 24px);
-      color: #e74c3c;
-      font-weight: bold;
-    }
-    
-    .btn {
-      font-family: 'Roboto', sans-serif;
-      padding: 8px 20px;
-      border: 3px solid #333;
-      background: white;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      transition: all 0.2s;
-      text-decoration: none;
-      color: #333;
-      display: inline-block;
-      margin-left: 5px;
-    }
-    
-    .btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 3px 3px 0 #333;
-    }
-    
-    .btn-outline-secondary {
-      background: #ecf0f1;
-    }
-    
-    .btn-success {
-      background: #2ecc71;
-      color: white;
-    }
-    
-    .btn-danger {
-      background: #e74c3c;
-      color: white;
-    }
-    
-    .btn-warning {
-      background: #f39c12;
-      color: white;
-    }
-    
-    .btn-info {
-      background: #3498db;
-      color: white;
-    }
-    
-    .btn-sm {
-      padding: 5px 10px;
-      font-size: 14px;
-    }
-    
-    .container {
-      max-width: 1400px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
-    
-    .alert {
-      padding: 15px;
-      margin-bottom: 20px;
-      border: 3px solid #333;
-      background: #fff9c4;
-      font-size: 16px;
-      box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
-      border-radius: 5px;
-    }
-    
-    .alert-success {
-      background: #d4edda;
-      border-color: #2ecc71;
-    }
-    
-    .alert-danger {
-      background: #f8d7da;
-      border-color: #e74c3c;
-    }
-    
-    .alert-info {
-      background: #d1ecf1;
-      border-color: #3498db;
-    }
-    
-    .card {
-      background: white;
-      border: 3px solid #333;
-      padding: 20px;
-      margin-bottom: 25px;
-      box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
-      border-radius: 10px;
-    }
-    
-    h5 {
-      font-size: clamp(20px, 4vw, 26px);
-      color: #e74c3c;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 13px;
-    }
-    
-    th {
-      background: #3498db;
-      color: white;
-      padding: 10px 8px;
-      text-align: left;
-      border: 2px solid #333;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    
-    td {
-      padding: 10px 8px;
-      border: 2px solid #ddd;
-      background: white;
-      word-break: break-word;
-    }
-    
-    tr:nth-child(even) td {
-      background: #f8f9fa;
-    }
-    
-    .badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border: 2px solid #333;
-      font-weight: bold;
-      font-size: 11px;
-      border-radius: 4px;
-      white-space: nowrap;
-    }
-    
-    .badge-hadir {
-      background: #17a2b8;
-      color: white;
-    }
-    
-    .badge-izin {
-      background: #ffc107;
-      color: #333;
-    }
-    
-    .bg-success {
-      background: #2ecc71;
-      color: white;
-    }
-    
-    .bg-warning {
-      background: #f39c12;
-      color: #333;
-    }
-    
-    .bg-danger {
-      background: #e74c3c;
-      color: white;
-    }
-    
-    a {
-      color: #3498db;
-    }
-    
-    a:hover {
-      color: #e74c3c;
-    }
-    
-    .table-responsive {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    .action-buttons {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-    
-    .text-truncate {
-      max-width: 200px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .nav-buttons {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 5px;
-    }
-    
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .modal.active {
-      display: flex;
-    }
-    
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border: 3px solid #333;
-      border-radius: 10px;
-      max-width: 90%;
-      max-height: 90vh;
-      overflow: auto;
-    }
-    
-    .modal-close {
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 20px;
-    }
-    
-    .modal-img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 10px auto;
-    }
-    
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-      nav {
-        padding: 10px 15px;
-      }
-      
-      .container {
-        padding: 0 10px;
-      }
-      
-      .card {
-        padding: 15px;
-      }
-      
-      table {
-        font-size: 11px;
-      }
-      
-      th, td {
-        padding: 6px 4px;
-      }
-      
-      .btn {
-        padding: 6px 12px;
-        font-size: 13px;
-        margin-left: 0;
-        margin-top: 5px;
-      }
-      
-      .btn-sm {
-        padding: 4px 8px;
-        font-size: 11px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .navbar-brand {
-        font-size: 16px;
-      }
-      
-      h5 {
-        font-size: 18px;
-      }
-    }
+    nav{background:#fff;border-bottom:3px solid #333;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:3px 3px 0 rgba(0,0,0,.1);flex-wrap:wrap;gap:10px}
+    .navbar-brand{font-size:clamp(18px,4vw,24px);color:#e74c3c;font-weight:bold}
+    .btn{padding:8px 20px;border:3px solid #333;background:#fff;cursor:pointer;font-size:16px;font-weight:bold;transition:.2s;text-decoration:none;color:#333;display:inline-block;margin-left:5px}
+    .btn:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 #333}
+    .btn-outline-secondary{background:#ecf0f1}
+    .btn-success{background:#2ecc71;color:#fff}
+    .btn-danger{background:#e74c3c;color:#fff}
+    .btn-warning{background:#f39c12;color:#fff}
+    .btn-info{background:#3498db;color:#fff}
+    .btn-sm{padding:5px 10px;font-size:14px}
+    .container{max-width:1400px;margin:20px auto;padding:0 15px}
+    .alert{padding:15px;margin-bottom:20px;border:3px solid #333;background:#fff9c4;font-size:16px;box-shadow:4px 4px 0 rgba(0,0,0,.1);border-radius:5px}
+    .card{background:#fff;border:3px solid #333;padding:20px;margin-bottom:25px;box-shadow:5px 5px 0 rgba(0,0,0,.1);border-radius:10px}
+    h5{font-size:clamp(20px,4vw,26px);color:#e74c3c;margin-bottom:20px;font-weight:bold}
+    table{width:100%;border-collapse:collapse;margin-top:15px;font-size:13px}
+    th{background:#3498db;color:#fff;padding:10px 8px;text-align:left;border:2px solid #333;font-weight:bold;position:sticky;top:0;z-index:10}
+    td{padding:10px 8px;border:2px solid #ddd;background:#fff;word-break:break-word}
+    tr:nth-child(even) td{background:#f8f9fa}
+    .badge{display:inline-block;padding:4px 8px;border:2px solid #333;font-weight:bold;font-size:11px;border-radius:4px;white-space:nowrap}
+    .badge-hadir{background:#17a2b8;color:#fff}
+    .badge-izin{background:#ffc107;color:#333}
+    .bg-success{background:#2ecc71;color:#fff}
+    .bg-warning{background:#f39c12;color:#333}
+    .bg-danger{background:#e74c3c;color:#fff}
+    .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .action-buttons{display:flex;gap:5px;flex-wrap:wrap}
+    .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.7);align-items:center;justify-content:center}
+    .modal.active{display:flex}
+    .modal-content{background:#fff;padding:20px;border:3px solid #333;border-radius:10px;max-width:90%;max-height:90vh;overflow:auto}
+    .modal-close{float:right;font-size:28px;font-weight:bold;cursor:pointer;line-height:20px}
+    .modal-img{max-width:100%;height:auto;display:block;margin:10px auto}
   </style>
 </head>
 <body>
 <nav>
   <span class="navbar-brand">👨‍💼 Admin Dashboard</span>
   <div class="nav-buttons">
-    <a class="btn btn-warning btn-sm" href="/admin/cleanup" 
-       onclick="return confirm('Yakin ingin membersihkan data lama dan upload ke backup?')">
-      🗑️ Cleanup
-    </a>
+    <a class="btn btn-warning btn-sm" href="/admin/cleanup" onclick="return confirm('Yakin ingin membersihkan data lama dan upload ke backup?')">🗑️ Cleanup</a>
     <a class="btn btn-outline-secondary" href="/logout">Logout</a>
   </div>
 </nav>
@@ -346,9 +67,7 @@
 
   <div class="card">
     <h5>📋 Data Absensi Semua Petugas</h5>
-    <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
-      💡 Foto otomatis dihapus setiap ganti hari dan dibackup ke server
-    </p>
+    <p style="color:#666;font-size:13px;margin-bottom:15px;">💡 Foto otomatis dihapus setiap ganti hari dan dibackup ke server</p>
     <div class="table-responsive">
       <table>
         <thead>
@@ -357,6 +76,7 @@
             <th>Nama</th>
             <th>Foto</th>
             <th>Tanggal</th>
+            <th>Jam Datang</th>
             <th>Jenis</th>
             <th>Status</th>
             <th>Keterangan</th>
@@ -367,11 +87,10 @@
           {% for r in absensi %}
             <tr>
               <td>{{ r['id'] }}</td>
-              <td>{{ r['nama'] }}</td>
-              <td>
-               <a href="#" class="show-image-btn" data-file="{{ '/uploads/' + r['filename'] }}">Lihat Gambar</a>
-              </td>
+              <td>{{ r['nama'] | upper }}</td>
+              <td><a href="#" class="show-image-btn" data-file="{{ '/uploads/' + r['filename'] }}">Lihat Gambar</a></td>
               <td>{{ r['tanggal'] }}</td>
+              <td>{{ r['jam_datang'] or '-' }}</td>
               <td>
                 {% if r['jenis'] == 'izin' %}
                   <span class="badge badge-izin">Izin</span>
@@ -388,34 +107,23 @@
                   <span class="badge bg-danger">✗ Ditolak</span>
                 {% endif %}
               </td>
-              <td style="max-width: 250px;">
+              <td style="max-width: 280px;">
                 {% if r['jenis'] == 'izin' and r['keterangan_izin'] %}
                   <strong>Keterangan Izin:</strong><br>
                   <em>{{ r['keterangan_izin'] }}</em>
-                  <hr style="margin: 5px 0; border: 1px dashed #ddd;">
+                  <hr style="margin:5px 0;border:1px dashed #ddd;">
                 {% endif %}
                 <small>{{ r['alasan'] or '-' }}</small>
                 {% if r['latitude'] and r['longitude'] %}
-                  <br><small style="color: #666;">
-                    📍 {{ "%.4f"|format(r['latitude']) }}, {{ "%.4f"|format(r['longitude']) }}
-                  </small>
+                  <br><small style="color:#666;">📍 {{ "%.4f"|format(r['latitude']) }}, {{ "%.4f"|format(r['longitude']) }}</small>
                 {% endif %}
               </td>
               <td>
                 <div class="action-buttons">
-                  {% if r['status'] != 'Disetujui' %}
-                    <a href="/approve/{{ r['id'] }}" class="btn btn-success btn-sm">✓</a>
-                  {% endif %}
-                  {% if r['status'] != 'Ditolak' %}
-                    <a href="/reject/{{ r['id'] }}" class="btn btn-danger btn-sm">✗</a>
-                  {% endif %}
+                  {% if r['status'] != 'Disetujui' %}<a href="/approve/{{ r['id'] }}" class="btn btn-success btn-sm">✓</a>{% endif %}
+                  {% if r['status'] != 'Ditolak' %}<a href="/reject/{{ r['id'] }}" class="btn btn-danger btn-sm">✗</a>{% endif %}
                   {% if r['exif_text'] %}
-                     <button class="btn btn-info btn-sm" 
-                             data-exif="{{ r['exif_text']|tojson }}" 
-                             onclick="showExif(this.dataset.exif)">
-    ℹ️
-                     </button>
-
+                    <button type="button" class="btn btn-info btn-sm exif-btn" data-exif='{{ r["exif_text"]|tojson }}' title="Lihat EXIF">ℹ️</button>
                   {% endif %}
                 </div>
               </td>
@@ -427,53 +135,23 @@
   </div>
 </div>
 
-<!-- Modal for Image -->
+<!-- Modal Gambar -->
 <div id="imageModal" class="modal">
   <div class="modal-content">
-    <span class="modal-close" onclick="closeModal('imageModal')">&times;</span>
+    <button type="button" class="modal-close" aria-label="Tutup">&times;</button>
     <img id="modalImage" class="modal-img" src="" alt="Foto Absensi">
   </div>
 </div>
 
-<!-- Modal for EXIF -->
+<!-- Modal EXIF -->
 <div id="exifModal" class="modal">
   <div class="modal-content">
-    <span class="modal-close" onclick="closeModal('exifModal')">&times;</span>
+    <button type="button" class="modal-close" aria-label="Tutup">&times;</button>
     <h5>📄 Data EXIF</h5>
-    <pre id="exifData" style="background: #f8f9fa; padding: 15px; border: 2px solid #ddd; border-radius: 5px; overflow: auto; max-height: 70vh; font-size: 12px;"></pre>
+    <pre id="exifData" style="background:#f8f9fa;padding:15px;border:2px solid #ddd;border-radius:5px;overflow:auto;max-height:70vh;font-size:12px;"></pre>
   </div>
 </div>
 
-<script>
-function showImage(src) {
-  document.getElementById('modalImage').src = src;
-  document.getElementById('imageModal').classList.add('active');
-}
-
-function showExif(data) {
-  document.getElementById('exifData').textContent = data;
-  document.getElementById('exifModal').classList.add('active');
-}
-
-function closeModal(modalId) {
-  document.getElementById(modalId).classList.remove('active');
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-  if (event.target.classList.contains('modal')) {
-    event.target.classList.remove('active');
-  }
-}
-
-document.querySelectorAll('.show-image-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-        e.preventDefault();
-        const file = btn.dataset.file;
-        showImage(file);
-    });
-});
-
-</script>
+<script src="{{ url_for('static', filename='admin.js') }}"></script>
 </body>
 </html>

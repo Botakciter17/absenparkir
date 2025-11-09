@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Izin - Absensi Piket</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      background:#fef9e7;font-family:'Roboto',sans-serif;
+      background-image:
+        repeating-linear-gradient(0deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px),
+        repeating-linear-gradient(90deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px);
+      min-height:100vh
+    }
+    nav{background:#fff;border-bottom:3px solid #333;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:3px 3px 0 rgba(0,0,0,.1);flex-wrap:wrap;gap:10px}
+    .navbar-brand{font-size:clamp(18px,4vw,24px);color:#e74c3c;font-weight:bold}
+    .btn{padding:8px 20px;border:3px solid #333;background:#fff;cursor:pointer;font-size:16px;font-weight:bold;transition:.2s;text-decoration:none;color:#333;display:inline-block}
+    .btn:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 #333}
+    .btn-success{background:#2ecc71;color:#fff}
+    .btn-outline-secondary{background:#ecf0f1}
+    .container{max-width:1000px;margin:20px auto;padding:0 15px}
+    .alert{padding:15px;margin-bottom:20px;border:3px solid #333;background:#fff9c4;font-size:16px;box-shadow:4px 4px 0 rgba(0,0,0,.1);border-radius:5px}
+    .card{background:#fff;border:3px solid #333;padding:20px;margin-bottom:25px;box-shadow:5px 5px 0 rgba(0,0,0,.1);border-radius:10px}
+    h5{font-size:clamp(20px,4vw,26px);color:#e74c3c;margin-bottom:20px;font-weight:bold}
+    .form-control,.form-textarea{padding:12px;border:3px solid #333;background:#fff;font-size:16px;width:100%;margin-bottom:10px;border-radius:5px}
+    .form-textarea{min-height:110px;resize:vertical}
+    .form-control:focus,.form-textarea:focus{outline:none;background:#fffacd;border-color:#3498db}
+    table{width:100%;border-collapse:collapse;margin-top:15px;font-size:14px}
+    th{background:#3498db;color:#fff;padding:12px 8px;text-align:left;border:2px solid #333;font-weight:bold}
+    td{padding:10px 8px;border:2px solid #ddd;background:#fff;word-break:break-word}
+    tr:nth-child(even) td{background:#f8f9fa}
+    .bg-success{background:#2ecc71;color:#fff}
+    .bg-warning{background:#f39c12;color:#333}
+    .bg-danger{background:#e74c3c;color:#fff}
+  </style>
+</head>
+<body>
+<nav>
+  <span class="navbar-brand">📝 Pengajuan Izin — {{ username | upper }}</span>
+  <div>
+    <a class="btn btn-outline-secondary" href="/upload">⬅️ Kembali</a>
+    <a class="btn btn-outline-secondary" href="/logout">Logout</a>
+  </div>
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, msg in messages %}
+        <div class="alert alert-{{ category }}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+    <h5>📤 Ajukan Izin</h5>
+    <form method="post" action="/izin" enctype="multipart/form-data">
+      <input type="hidden" name="jenis" value="izin">
+      <div class="form-group">
+        <label>📷 Upload Bukti (opsional: surat dokter / foto pendukung)</label>
+        <input class="form-control" type="file" name="file" accept="image/*" required>
+      </div>
+      <div class="form-group">
+        <label>📝 Keterangan Izin *</label>
+        <textarea class="form-textarea" name="keterangan_izin" placeholder="Contoh: Sakit demam, ada surat dokter..." required minlength="10" maxlength="500"></textarea>
+        <div style="font-size:12px;color:#666;text-align:right;">Harus ≥ 10 karakter</div>
+      </div>
+      <button class="btn btn-success" type="submit" style="width:100%;">Kirim Pengajuan Izin</button>
+      <p style="margin-top:10px;font-size:13px;color:#666;text-align:center;">
+        ℹ️ File: JPG, PNG, GIF, BMP, WEBP (Max 10MB)
+      </p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h5>🗂️ Riwayat Izin</h5>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Tanggal</th>
+            <th>Status</th>
+            <th>Keterangan</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for r in uploads %}
+          <tr>
+            <td><a href="/uploads/{{ r['filename'] }}" target="_blank">{{ r['filename'][:30] }}...</a></td>
+            <td>{{ r['tanggal'] }}</td>
+            <td>
+              {% if r['status'] == 'Disetujui' %}
+                <span class="bg-success" style="padding:4px 8px;border-radius:4px;">Disetujui</span>
+              {% elif r['status'] == 'Pending' %}
+                <span class="bg-warning" style="padding:4px 8px;border-radius:4px;">Pending</span>
+              {% else %}
+                <span class="bg-danger" style="padding:4px 8px;border-radius:4px;">Ditolak</span>
+              {% endif %}
+            </td>
+            <td>
+              <strong>Izin:</strong> {{ r['keterangan_izin'][:80] }}{% if r['keterangan_izin']|length > 80 %}...{% endif %}
+              <br><small style="color:#666;">{{ r['alasan'] }}</small>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4" style="text-align:center;color:#666;">Belum ada pengajuan izin.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

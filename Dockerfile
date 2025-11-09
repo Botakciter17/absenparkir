@@ -1,29 +1,38 @@
-FROM python:3.11-slim
+# ---------- base ----------
+FROM python:3.12-slim AS base
 
-# Install exiftool dan dependencies sistem
-RUN apt-get update && apt-get install -y \
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Install runtime deps for Pillow & exiftool
+RUN apt-get update && apt-get install -y --no-install-recommends \
     exiftool \
-    libimage-exiftool-perl \
+    libjpeg62-turbo \
+    zlib1g \
+    libtiff6 \
+    libwebp7 \
+    libopenjp2-7 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# ---------- app ----------
 WORKDIR /app
 
-# Install Python dependencies langsung
-RUN pip install --no-cache-dir Flask==3.0.0 Werkzeug==3.0.1
+# Install Python deps first (better layer caching)
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy aplikasi
-COPY . .
+# Copy the rest of the app
+COPY . /app
 
-# Buat folder uploads
-RUN mkdir -p uploads
+# Ensure folders exist
+RUN mkdir -p /app/uploads
 
-# Expose port
+# Create unprivileged user
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
+
 EXPOSE 8083
 
-# Set environment variables
-ENV FLASK_APP=app.py
-ENV PYTHONUNBUFFERED=1
-
-# Run aplikasi
-CMD ["python", "app.py"]
+# Use gunicorn for production serving
+# - 3 workers, each 8 threads, bind 0.0.0.0:8083
+CMD ["gunicorn", "-w", "3", "-k", "gthread", "--threads", "8", "-b", "0.0.0.0:8083", "app:app"]

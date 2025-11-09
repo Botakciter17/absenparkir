@@ -13,7 +13,6 @@ from werkzeug.utils import secure_filename
 import bleach
 import requests
 from threading import Thread
-import json
 from PIL import Image
 
 app = Flask(__name__)
@@ -48,7 +47,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024
 # Jadwal piket
 JADWAL = {
     "Senin": [
-        "Zifanna Hermin Najwa","Iin Nur Cahaya","Tiara Citra Kirana",
+        "Zifanna Hermin Najwa","Lin Nur Cahaya","Tiara Citra Kirana",
         "Alvianino Miftahul Arifin","Laili Ulin Nuha","Safa Arifatul Funun","Rafael Mahar Dhika"
     ],
     "Selasa": [
@@ -117,33 +116,20 @@ def sanitize_input(text):
 def upload_to_backup_api(file_path, filename):
     """Upload file to backup API with login"""
     session_api = requests.Session()
-    
     try:
-        # Step 1: Login to get session/token
-        login_data = {
-            'username': BACKUP_USERNAME,
-            'password': BACKUP_PASSWORD
-        }
-        
+        login_data = {'username': BACKUP_USERNAME,'password': BACKUP_PASSWORD}
         login_response = session_api.post(BACKUP_LOGIN_URL, data=login_data, timeout=15)
-        
         if login_response.status_code != 200:
             return False, f"Login failed: HTTP {login_response.status_code}"
-        
-        # Check if login successful
         if 'login' in login_response.url.lower() or 'error' in login_response.text.lower():
             return False, "Login credentials rejected"
-        
-        # Step 2: Upload file using authenticated session
         with open(file_path, 'rb') as f:
             files = {'file': (filename, f, 'image/jpeg')}
             upload_response = session_api.post(BACKUP_API_URL, files=files, timeout=30)
-            
             if upload_response.status_code == 200:
                 return True, "Success"
             else:
                 return False, f"Upload failed: HTTP {upload_response.status_code}"
-                
     except requests.exceptions.Timeout:
         return False, "Timeout"
     except requests.exceptions.RequestException as e:
@@ -177,54 +163,32 @@ def cleanup_old_photos_async():
         try:
             today = datetime.now().strftime("%Y-%m-%d")
             last_cleanup = get_last_cleanup_date()
-            
-            # Skip if already cleaned today
             if last_cleanup == today:
                 return
-            
             conn = get_db_conn()
             c = conn.cursor()
-            
-            # Get yesterday's photos
-            yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             c.execute("SELECT id, filename, tanggal FROM absensi WHERE tanggal < ?", (today,))
             old_records = c.fetchall()
-            
             success_count = 0
             fail_count = 0
-            
             for record in old_records:
                 file_path = os.path.join(UPLOAD_FOLDER, record['filename'])
-                
-                # Upload to backup if file exists
                 if os.path.exists(file_path):
                     success, message = upload_to_backup_api(file_path, record['filename'])
                     if success:
                         success_count += 1
-                        # Delete file after successful upload
-                        try:
-                            os.remove(file_path)
-                        except:
-                            pass
+                        try: os.remove(file_path)
+                        except: pass
                     else:
                         fail_count += 1
                         print(f"Failed to upload {record['filename']}: {message}")
-                
-                # Delete database record
                 c.execute("DELETE FROM absensi WHERE id=?", (record['id'],))
-            
             conn.commit()
             conn.close()
-            
-            # Mark cleanup as done
             set_last_cleanup_date(today)
-            
             print(f"Cleanup complete: {success_count} uploaded, {fail_count} failed, {len(old_records)} records deleted")
-            
         except Exception as e:
             print(f"Cleanup error: {e}")
-    
-    # Run cleanup in background thread
     thread = Thread(target=do_cleanup)
     thread.daemon = True
     thread.start()
@@ -255,7 +219,6 @@ def admin_required(f):
 def get_db_conn():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
-    # Enable foreign keys
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
@@ -266,20 +229,14 @@ def validate_image(file_path):
     """Validate if file is actually an image using Pillow"""
     try:
         with Image.open(file_path) as img:
-            # Verify it's a valid image
             img.verify()
-        
-        # Check file size
         if os.path.getsize(file_path) > MAX_FILE_SIZE:
             return False
-        
-        # Check if format is allowed
         with Image.open(file_path) as img:
             if img.format.lower() not in ['jpeg', 'png', 'gif', 'bmp', 'webp']:
                 return False
-        
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 def count_today_uploads(user_id):
@@ -294,10 +251,8 @@ def count_today_uploads(user_id):
 
 def haversine_meters(lat1, lon1, lat2, lon2):
     R = 6371000.0
-    phi1 = radians(lat1)
-    phi2 = radians(lat2)
-    dphi = radians(lat2 - lat1)
-    dlambda = radians(lon2 - lon1)
+    phi1 = radians(lat1); phi2 = radians(lat2)
+    dphi = radians(lat2 - lat1); dlambda = radians(lon2 - lon1)
     a = sin(dphi/2)**2 + cos(phi1)*cos(phi2)*sin(dlambda/2)**2
     c = 2 * atan2(sqrt(a), sqrt(1-a))
     return R * c
@@ -332,10 +287,19 @@ def ensure_db():
                     exif_text TEXT,
                     jenis TEXT DEFAULT 'hadir' CHECK(jenis IN ('hadir', 'izin')),
                     keterangan_izin TEXT,
+                    jam_datang TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
                  )''')
-    # Create indices for better performance
+    # Tambah kolom jam_datang jika belum ada (untuk DB lama)
+    try:
+        c.execute("PRAGMA table_info(absensi)")
+        cols = [row[1] for row in c.fetchall()]
+        if 'jam_datang' not in cols:
+            c.execute("ALTER TABLE absensi ADD COLUMN jam_datang TEXT")
+    except Exception:
+        pass
+    # Index
     c.execute('''CREATE INDEX IF NOT EXISTS idx_absensi_user_tanggal 
                  ON absensi(user_id, tanggal)''')
     c.execute('''CREATE INDEX IF NOT EXISTS idx_absensi_status 
@@ -348,7 +312,7 @@ def ensure_db():
 def seed_users_from_jadwal():
     conn = get_db_conn()
     c = conn.cursor()
-    for day, names in JADWAL.items():
+    for _, names in JADWAL.items():
         for full in names:
             username = make_username(full)
             password_hash = hash_password(username)
@@ -359,7 +323,7 @@ def seed_users_from_jadwal():
             else:
                 c.execute("INSERT INTO users (nama, username, password, role) VALUES (?,?,?,?)", 
                          (full, username, password_hash, 'petugas'))
-    # Ensure admin with hashed password
+    # Ensure admin
     c.execute("SELECT id FROM users WHERE username='admin'")
     if not c.fetchone():
         c.execute("INSERT INTO users (nama, username, password, role) VALUES (?,?,?,?)", 
@@ -369,7 +333,6 @@ def seed_users_from_jadwal():
 
 def run_exiftool_on_file(path):
     try:
-        # Sanitize path to prevent command injection
         if not os.path.exists(path):
             return "File not found"
         p = subprocess.run(['exiftool', path], capture_output=True, text=True, timeout=6)
@@ -377,20 +340,18 @@ def run_exiftool_on_file(path):
     except subprocess.TimeoutExpired:
         return "ExifTool timeout"
     except Exception as e:
-        return f"ExifTool error: {str(e)[:100]}"  # Limit error message length
+        return f"ExifTool error: {str(e)[:100]}"
 
 def parse_exif_datetime(exif_text):
     m = re.search(r'(\d{4}[:\-]\d{2}[:\-]\d{2})[ T](\d{2}):(\d{2})', exif_text)
     if m:
         date_part = m.group(1).replace('-', ':')
-        hour = int(m.group(2))
-        minute = int(m.group(3))
+        hour = int(m.group(2)); minute = int(m.group(3))
         return date_part, hour, minute
     return None, None, None
 
 def parse_exif_gps(exif_text):
-    lat = None
-    lon = None
+    lat = None; lon = None
     for line in exif_text.splitlines():
         line = line.strip()
         if not line or ":" not in line:
@@ -405,8 +366,7 @@ def parse_exif_gps(exif_text):
                 if m:
                     d, m_, s, ref = m.groups()
                     lat = int(d) + int(m_) / 60 + float(s) / 3600
-                    if ref.upper() == 'S':
-                        lat = -lat
+                    if ref.upper() == 'S': lat = -lat
         if "GPS Longitude" in key:
             try:
                 lon = float(val.split()[0])
@@ -415,8 +375,7 @@ def parse_exif_gps(exif_text):
                 if m:
                     d, m_, s, ref = m.groups()
                     lon = int(d) + int(m_) / 60 + float(s) / 3600
-                    if ref.upper() == 'W':
-                        lon = -lon
+                    if ref.upper() == 'W': lon = -lon
     return lat, lon
 
 # ====== Init DB & seed ======
@@ -441,35 +400,26 @@ def set_security_headers(response):
 def login():
     if 'user_id' in session:
         return redirect(url_for('dashboard' if session.get('role')=='admin' else 'upload'))
-    
     if request.method == 'POST':
         ip_address = request.remote_addr
-        
-        # Check rate limiting
         if not check_rate_limit(ip_address):
             remaining_time = LOGIN_TIMEOUT // 60
             flash(f"Terlalu banyak percobaan login. Coba lagi dalam {remaining_time} menit.", "danger")
             return render_template('login.html', jadwal=JADWAL)
-        
         username = sanitize_input(request.form.get('username', '')).lower()
         password = sanitize_input(request.form.get('password', ''))
-        
-        # Validate input
         if not username or not password:
             flash("Username dan password harus diisi", "warning")
             return render_template('login.html', jadwal=JADWAL)
-        
         if len(username) > 50 or len(password) > 100:
             flash("Input terlalu panjang", "danger")
             return render_template('login.html', jadwal=JADWAL)
-        
         conn = get_db_conn()
         c = conn.cursor()
         password_hash = hash_password(password)
         c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password_hash))
         user = c.fetchone()
         conn.close()
-        
         if user:
             reset_login_attempts(ip_address)
             session.permanent = True
@@ -478,75 +428,78 @@ def login():
             session['nama'] = user['nama']
             session['role'] = user['role']
             session['csrf_token'] = secrets.token_hex(16)
-            
             flash(f"Selamat datang, {user['nama']}!", "success")
             return redirect(url_for('dashboard' if user['role']=='admin' else 'upload'))
         else:
             record_failed_login(ip_address)
             attempts_left = MAX_LOGIN_ATTEMPTS - login_attempts.get(ip_address, (0, None))[0]
             flash(f"Login gagal! Sisa percobaan: {attempts_left}", "danger")
-    
     return render_template('login.html', jadwal=JADWAL)
 
 @app.route('/upload', methods=['GET','POST'])
 @login_required
 def upload():
-    # Check for cleanup on every request
     cleanup_old_photos_async()
-    
     if request.method == 'POST':
-        # CSRF protection (simple)
         if not session.get('csrf_token'):
             flash("Session expired. Please login again.", "danger")
             return redirect(url_for('login'))
-        
-        # Check upload limit
+
+        # === Jam datang (WAJIB) ===
+        jam_datang_raw = sanitize_input(request.form.get('jam_datang', ''))
+        if not jam_datang_raw or not re.match(r'^\d{2}:\d{2}$', jam_datang_raw):
+            flash("Jam datang wajib diisi (format HH:MM).", "danger")
+            return redirect(request.url)
+        # normalisasi ke HH:MM (24h)
+        try:
+            jam_datang = datetime.strptime(jam_datang_raw, "%H:%M").strftime("%H:%M")
+        except ValueError:
+            flash("Format jam datang tidak valid.", "danger")
+            return redirect(request.url)
+
+        # Batas upload harian
         upload_count = count_today_uploads(session['user_id'])
         if upload_count >= MAX_UPLOAD_PER_DAY:
             flash(f"Maksimal {MAX_UPLOAD_PER_DAY} kali upload per hari.", "danger")
             return redirect(request.url)
-        
+
         f = request.files.get('file')
         if not f or f.filename == '':
             flash("Pilih file dulu.", "warning")
             return redirect(request.url)
-        
-        # Validate file extension
         if not allowed_file(f.filename):
             flash("File harus berupa gambar (jpg, jpeg, png, gif, bmp, webp).", "danger")
             return redirect(request.url)
-        
-        # Secure filename
+
         original_filename = secure_filename(f.filename)
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         random_string = secrets.token_hex(4)
         filename = f"{timestamp}_{random_string}_{original_filename}"
         path = os.path.join(UPLOAD_FOLDER, filename)
-        
         try:
             f.save(path)
-        except Exception as e:
+        except Exception:
             flash("Gagal menyimpan file.", "danger")
             return redirect(request.url)
-        
-        # Validate image content
+
         if not validate_image(path):
             os.remove(path)
             flash("File bukan gambar yang valid atau terlalu besar.", "danger")
             return redirect(request.url)
-        
-        # Process EXIF
+
+        # EXIF & penilaian hadir
         exif_text = run_exiftool_on_file(path)
         date_str, hour, minute = parse_exif_datetime(exif_text)
         lat, lon = parse_exif_gps(exif_text)
-        
+
         status = "Pending"
         alasan = ""
+        jenis = "hadir"
+        keterangan_izin = None
+
         today_db = datetime.now().strftime("%Y:%m:%d")
-        
         if not date_str:
-            status = "Ditolak"
-            alasan = "Foto tidak memiliki metadata waktu"
+            status = "Ditolak"; alasan = "Foto tidak memiliki metadata waktu"
             flash("Foto tidak valid!", "danger")
         else:
             if date_str != today_db:
@@ -576,39 +529,117 @@ def upload():
                         else:
                             alasan = "Tidak ada data GPS dan waktu tidak valid"
                         flash("Foto harus diambil jam 06:00-06:59 atau di lokasi sekolah!", "danger")
-        
-        # Save to database
+
+        # Simpan
         conn = get_db_conn()
         c = conn.cursor()
         try:
             c.execute("""INSERT INTO absensi
-                         (user_id, filename, tanggal, datetime_exif, latitude, longitude, status, alasan, exif_text)
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                         (user_id, filename, tanggal, datetime_exif, latitude, longitude, status, alasan, exif_text, jenis, keterangan_izin, jam_datang)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                       (session['user_id'], filename, datetime.now().strftime("%Y-%m-%d"),
-                       exif_text.splitlines()[0] if exif_text else None, lat, lon, status, alasan, exif_text))
+                       exif_text.splitlines()[0] if exif_text else None, lat, lon, status, alasan, exif_text,
+                       jenis, keterangan_izin, jam_datang))
             conn.commit()
-        except Exception as e:
+        except Exception:
             conn.rollback()
-            os.remove(path)  # Delete uploaded file if DB insert fails
+            os.remove(path)
             flash("Gagal menyimpan data absensi.", "danger")
         finally:
             conn.close()
-        
         return redirect(url_for('upload'))
-    
+
     # GET
     upload_count = count_today_uploads(session['user_id'])
     remaining = MAX_UPLOAD_PER_DAY - upload_count
-    
     conn = get_db_conn()
     c = conn.cursor()
-    c.execute("SELECT filename,tanggal,status,alasan FROM absensi WHERE user_id=? ORDER BY id DESC LIMIT 50", 
+    c.execute("""SELECT filename,tanggal,jenis,status,alasan,keterangan_izin,jam_datang 
+                 FROM absensi WHERE user_id=? ORDER BY id DESC LIMIT 50""", 
               (session['user_id'],))
     rows = c.fetchall()
     conn.close()
-    
     return render_template('index.html', username=session.get('nama'), uploads=rows, 
                          upload_count=upload_count, remaining=remaining, max_upload=MAX_UPLOAD_PER_DAY)
+
+@app.route('/izin', methods=['GET','POST'])
+@login_required
+def izin():
+    cleanup_old_photos_async()
+    if request.method == 'POST':
+        if not session.get('csrf_token'):
+            flash("Session expired. Please login again.", "danger")
+            return redirect(url_for('login'))
+
+        upload_count = count_today_uploads(session['user_id'])
+        if upload_count >= MAX_UPLOAD_PER_DAY:
+            flash(f"Maksimal {MAX_UPLOAD_PER_DAY} kali upload per hari.", "danger")
+            return redirect(request.url)
+
+        f = request.files.get('file')
+        ket = sanitize_input(request.form.get('keterangan_izin', ''))
+
+        if not f or f.filename == '':
+            flash("Pilih file dulu.", "warning")
+            return redirect(request.url)
+        if len(ket) < 10:
+            flash("Keterangan izin minimal 10 karakter.", "danger")
+            return redirect(request.url)
+        if not allowed_file(f.filename):
+            flash("File harus berupa gambar (jpg, jpeg, png, gif, bmp, webp).", "danger")
+            return redirect(request.url)
+
+        original_filename = secure_filename(f.filename)
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        random_string = secrets.token_hex(4)
+        filename = f"{timestamp}_{random_string}_{original_filename}"
+        path = os.path.join(UPLOAD_FOLDER, filename)
+        try:
+            f.save(path)
+        except Exception:
+            flash("Gagal menyimpan file.", "danger")
+            return redirect(request.url)
+
+        if not validate_image(path):
+            os.remove(path)
+            flash("File bukan gambar yang valid atau terlalu besar.", "danger")
+            return redirect(request.url)
+
+        exif_text = run_exiftool_on_file(path)
+        lat, lon = parse_exif_gps(exif_text)
+        date_str, hour, minute = parse_exif_datetime(exif_text)
+
+        jenis = "izin"
+        status = "Pending"
+        alasan = "Menunggu verifikasi admin"
+
+        conn = get_db_conn()
+        c = conn.cursor()
+        try:
+            c.execute("""INSERT INTO absensi
+                         (user_id, filename, tanggal, datetime_exif, latitude, longitude, status, alasan, exif_text, jenis, keterangan_izin, jam_datang)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                      (session['user_id'], filename, datetime.now().strftime("%Y-%m-%d"),
+                       exif_text.splitlines()[0] if exif_text else None, lat, lon, status, alasan, exif_text, jenis, ket, None))
+            conn.commit()
+            flash("Pengajuan izin terkirim. Menunggu verifikasi admin.", "success")
+        except Exception:
+            conn.rollback()
+            os.remove(path)
+            flash("Gagal menyimpan pengajuan izin.", "danger")
+        finally:
+            conn.close()
+        return redirect(url_for('izin'))
+
+    # GET
+    conn = get_db_conn()
+    c = conn.cursor()
+    c.execute("""SELECT filename,tanggal,jenis,status,alasan,keterangan_izin,jam_datang 
+                 FROM absensi WHERE user_id=? AND jenis='izin'
+                 ORDER BY id DESC LIMIT 50""", (session['user_id'],))
+    rows = c.fetchall()
+    conn.close()
+    return render_template('izin.html', username=session.get('nama'), uploads=rows)
 
 @app.route('/dashboard')
 @admin_required
@@ -616,7 +647,8 @@ def dashboard():
     conn = get_db_conn()
     c = conn.cursor()
     c.execute("""SELECT a.id, u.nama, a.filename, a.tanggal, a.datetime_exif,
-                        a.latitude, a.longitude, a.status, a.alasan, a.exif_text
+                        a.latitude, a.longitude, a.status, a.alasan, a.exif_text,
+                        a.jenis, a.keterangan_izin, a.jam_datang
                  FROM absensi a JOIN users u ON a.user_id=u.id
                  ORDER BY a.id DESC LIMIT 200""")
     rows = c.fetchall()
@@ -648,15 +680,11 @@ def reject(absen_id):
 @app.route('/uploads/<path:filename>')
 @login_required
 def uploaded_file(filename):
-    # Prevent directory traversal
     safe_filename = secure_filename(filename)
     file_path = os.path.join(UPLOAD_FOLDER, safe_filename)
-    
-    # Check if file exists and is in upload folder
     if not os.path.exists(file_path) or not os.path.isfile(file_path):
         flash("File tidak ditemukan.", "danger")
         return redirect(url_for('upload'))
-    
     return send_from_directory(UPLOAD_FOLDER, safe_filename)
 
 @app.route('/logout')
@@ -667,54 +695,38 @@ def logout():
 
 @app.route('/favicon.ico')
 def favicon():
-    # Return empty response for favicon to avoid 404 errors
     return '', 204
 
 @app.route('/admin/cleanup')
 @admin_required
 def manual_cleanup():
-    """Manual cleanup trigger for admin"""
     try:
         today = datetime.now().strftime("%Y-%m-%d")
         conn = get_db_conn()
         c = conn.cursor()
-        
         c.execute("SELECT id, filename, tanggal FROM absensi WHERE tanggal < ?", (today,))
         old_records = c.fetchall()
-        
         if not old_records:
             flash("Tidak ada data lama untuk dibersihkan.", "info")
             return redirect(url_for('dashboard'))
-        
-        success_count = 0
-        fail_count = 0
-        
+        success_count = 0; fail_count = 0
         for record in old_records:
             file_path = os.path.join(UPLOAD_FOLDER, record['filename'])
-            
             if os.path.exists(file_path):
                 success, message = upload_to_backup_api(file_path, record['filename'])
                 if success:
                     success_count += 1
-                    try:
-                        os.remove(file_path)
-                    except:
-                        pass
+                    try: os.remove(file_path)
+                    except: pass
                 else:
                     fail_count += 1
-            
             c.execute("DELETE FROM absensi WHERE id=?", (record['id'],))
-        
         conn.commit()
         conn.close()
-        
         set_last_cleanup_date(today)
-        
         flash(f"Cleanup selesai! {success_count} file diupload, {fail_count} gagal, {len(old_records)} record dihapus.", "success")
-        
     except Exception as e:
         flash(f"Error saat cleanup: {str(e)[:100]}", "danger")
-    
     return redirect(url_for('dashboard'))
 
 # Error handlers
@@ -726,32 +738,26 @@ def too_large(e):
 @app.errorhandler(404)
 def page_not_found(e):
     return '''
-    <!doctype html>
-    <html>
-    <head><title>404 - Not Found</title></head>
+    <!doctype html><html><head><title>404 - Not Found</title></head>
     <body style="font-family: Arial; text-align: center; padding: 50px;">
         <h1>404 - Halaman Tidak Ditemukan</h1>
         <p>Halaman yang Anda cari tidak ada.</p>
         <a href="/" style="color: #3498db;">Kembali ke Home</a>
-    </body>
-    </html>
+    </body></html>
     ''', 404
 
 @app.errorhandler(500)
 def internal_error(e):
     return '''
-    <!doctype html>
-    <html>
-    <head><title>500 - Server Error</title></head>
+    <!doctype html><html><head><title>500 - Server Error</title></head>
     <body style="font-family: Arial; text-align: center; padding: 50px;">
         <h1>500 - Server Error</h1>
         <p>Terjadi kesalahan pada server.</p>
         <a href="/" style="color: #3498db;">Kembali ke Home</a>
-    </body>
-    </html>
+    </body></html>
     ''', 500
 
 # ===== run =====
 if __name__ == '__main__':
-    # PRODUCTION: Set debug=False and use proper WSGI server
+    # PRODUCTION: Set debug=False dan gunakan WSGI
     app.run(debug=True, host='0.0.0.0', port=8083)
