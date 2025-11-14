@@ -1,84 +1,296 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login - Absensi Piket Parkir</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <title>Login - Absensi Piket</title>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{
-      background:#fef9e7;font-family:'Roboto',sans-serif;
-      background-image:
-        repeating-linear-gradient(0deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px),
-        repeating-linear-gradient(90deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px);
-      min-height:100vh;padding:40px 20px
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .container{max-width:1200px;margin:0 auto}
-    .row{display:flex;gap:20px;flex-wrap:wrap}
-    .col-lg-5,.col-lg-7{flex:1 1 100%}
-    @media (min-width:992px){
-      .col-lg-5{flex:1 1 calc(41.666% - 10px)}
-      .col-lg-7{flex:1 1 calc(58.334% - 10px)}
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    .card{background:#fff;border:3px solid #333;padding:25px;box-shadow:5px 5px 0 rgba(0,0,0,.1);position:relative;margin-bottom:20px}
-    .card::before{content:'';position:absolute;top:-8px;right:20px;width:30px;height:20px;background:#e74c3c;clip-path:polygon(50% 0%, 0% 100%, 100% 100%)}
-    .card::after{content:'📎';position:absolute;top:10px;right:15px;font-size:24px;transform:rotate(45deg)}
-    h4,h5{font-size:26px;color:#e74c3c;margin-bottom:20px;display:inline-block}
-    .alert{padding:15px;margin-bottom:20px;border:3px solid #333;background:#fff9c4;font-size:16px;box-shadow:4px 4px 0 rgba(0,0,0,.1)}
-    .form-control{padding:12px;border:3px solid #333;background:#fff;font-size:16px;width:100%;margin-bottom:15px}
-    .form-control:focus{outline:none;background:#fffacd}
-    .btn{padding:12px 20px;border:3px solid #333;background:#3498db;color:#fff;cursor:pointer;font-size:18px;font-weight:bold;transition:.2s;width:100%;text-align:center}
-    .btn:hover{transform:translate(-3px,-3px);box-shadow:3px 3px 0 #333;background:#2980b9}
-    .text-muted{color:#7f8c8d;font-size:14px;line-height:1.6;display:block;margin-top:15px}
-    code{background:#ecf0f1;padding:2px 6px;border:2px solid #333;font-family:monospace;color:#e74c3c}
-    .jadwal-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-top:15px}
-    .jadwal-col{background:#ecf0f1;padding:15px;border:2px solid #333}
-    .jadwal-col strong{display:block;color:#2c3e50;font-size:18px;margin-bottom:10px;padding-bottom:5px;border-bottom:2px dashed #333}
-    .jadwal-col ul{list-style:none;padding:0;margin:0}
-    .jadwal-col li{padding:5px 0;color:#34495e;position:relative;padding-left:20px}
-    .jadwal-col li::before{content:'✓';position:absolute;left:0;color:#27ae60;font-weight:bold}
+    
+    .container {
+      width: 100%;
+      max-width: 1000px;
+    }
+    
+    .login-card {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border-left: 4px solid #ffc107;
+    }
+    
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group.hidden {
+      display: none;
+    }
+    
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    
+    select, input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+      transition: all 0.3s;
+    }
+    
+    select {
+      cursor: pointer;
+    }
+    
+    select:focus, input[type="password"]:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      background: #357abd;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .info-text {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-top: 16px;
+    }
+    
+    .admin-notice {
+      background: #fff3cd;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #856404;
+      margin-top: 8px;
+      border-left: 3px solid #ffc107;
+    }
+    
+    .jadwal-card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    .jadwal-card h2 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .jadwal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    
+    .jadwal-item {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .jadwal-item h3 {
+      font-size: 16px;
+      color: #4a90e2;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    .jadwal-item ul {
+      list-style: none;
+    }
+    
+    .jadwal-item li {
+      font-size: 13px;
+      color: #555;
+      padding: 4px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+    
+    .jadwal-item li:before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #28a745;
+      font-weight: bold;
+    }
+    
+    @media (max-width: 768px) {
+      .login-card {
+        padding: 24px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .jadwal-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="row">
-    <div class="col-lg-5">
-      <div class="card">
-        <h4>Login</h4>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, msg in messages %}
-              <div class="alert">{{ msg }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-        <form method="post">
-          <input name="username" class="form-control" placeholder="Username (contoh: zifanna)" required>
-          <input type="password" name="password" class="form-control" placeholder="Password (sama dengan username)" required>
-          <button class="btn" type="submit">Login</button>
-        </form>
-        <small class="text-muted">Password sama dengan username. Jika nama: <code>LIN NUR CAHAYA</code> ⇒ username: <code>lin</code>.</small>
-      </div>
-    </div>
-    <div class="col-lg-7">
-      <div class="card">
-        <h5>Jadwal Piket</h5>
-        <div class="jadwal-row">
-          {% for hari, daftar in jadwal.items() %}
-            <div class="jadwal-col">
-              <strong>{{ hari }} 📌</strong>
-              <ul>
-                {% for n in daftar %}
-                  <li>{{ n | upper }}</li>
-                {% endfor %}
-              </ul>
-            </div>
+  <div class="container">
+    <div class="login-card">
+      <h1>🔐 Login Absensi Piket</h1>
+      
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }}">{{ msg }}</div>
           {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
+      <form method="post">
+        <div class="form-group">
+          <label>Pilih Nama Anda</label>
+          <select name="nama" id="namaSelect" required onchange="checkAdmin()">
+            <option value="">-- Pilih Nama --</option>
+            <optgroup label="👤 Admin">
+              <option value="ADMIN">ADMIN</option>
+            </optgroup>
+            {% for hari, daftar in jadwal.items() %}
+              <optgroup label="📅 {{ hari }}">
+                {% for nama in daftar %}
+                  <option value="{{ nama | upper }}">{{ nama | upper }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
         </div>
+        
+        <div class="form-group {% if not show_password %}hidden{% endif %}" id="passwordGroup">
+          <label>🔒 Password Admin</label>
+          <input type="password" name="password" id="passwordInput" placeholder="Masukkan password admin">
+          <div class="admin-notice">
+            ⚠️ Khusus admin memerlukan password untuk login
+          </div>
+        </div>
+        
+        <button type="submit">Login</button>
+        
+        <p class="info-text">
+          💡 Pilih nama Anda dari daftar untuk login
+        </p>
+      </form>
+    </div>
+    
+    <div class="jadwal-card">
+      <h2>📅 Jadwal Piket</h2>
+      <div class="jadwal-grid">
+        {% for hari, daftar in jadwal.items() %}
+          <div class="jadwal-item">
+            <h3>{{ hari }}</h3>
+            <ul>
+              {% for nama in daftar %}
+                <li>{{ nama | upper }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
       </div>
     </div>
   </div>
-</div>
+  
+  <script>
+    function checkAdmin() {
+      const select = document.getElementById('namaSelect');
+      const passwordGroup = document.getElementById('passwordGroup');
+      const passwordInput = document.getElementById('passwordInput');
+      
+      if (select.value === 'ADMIN') {
+        passwordGroup.classList.remove('hidden');
+        passwordInput.required = true;
+        passwordInput.focus();
+      } else {
+        passwordGroup.classList.add('hidden');
+        passwordInput.required = false;
+        passwordInput.value = '';
+      }
+    }
+    
+    // Check on page load (if admin was selected before)
+    window.addEventListener('DOMContentLoaded', function() {
+      checkAdmin();
+    });
+  </script>
 </body>
 </html>

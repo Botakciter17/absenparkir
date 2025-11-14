@@ -1,157 +1,450 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Admin Dashboard - Absensi Piket</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{
-      background:#fef9e7;font-family:'Roboto',sans-serif;
-      background-image:
-        repeating-linear-gradient(0deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px),
-        repeating-linear-gradient(90deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px);
-      min-height:100vh
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    nav{background:#fff;border-bottom:3px solid #333;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:3px 3px 0 rgba(0,0,0,.1);flex-wrap:wrap;gap:10px}
-    .navbar-brand{font-size:clamp(18px,4vw,24px);color:#e74c3c;font-weight:bold}
-    .btn{padding:8px 20px;border:3px solid #333;background:#fff;cursor:pointer;font-size:16px;font-weight:bold;transition:.2s;text-decoration:none;color:#333;display:inline-block;margin-left:5px}
-    .btn:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 #333}
-    .btn-outline-secondary{background:#ecf0f1}
-    .btn-success{background:#2ecc71;color:#fff}
-    .btn-danger{background:#e74c3c;color:#fff}
-    .btn-warning{background:#f39c12;color:#fff}
-    .btn-info{background:#3498db;color:#fff}
-    .btn-sm{padding:5px 10px;font-size:14px}
-    .container{max-width:1400px;margin:20px auto;padding:0 15px}
-    .alert{padding:15px;margin-bottom:20px;border:3px solid #333;background:#fff9c4;font-size:16px;box-shadow:4px 4px 0 rgba(0,0,0,.1);border-radius:5px}
-    .card{background:#fff;border:3px solid #333;padding:20px;margin-bottom:25px;box-shadow:5px 5px 0 rgba(0,0,0,.1);border-radius:10px}
-    h5{font-size:clamp(20px,4vw,26px);color:#e74c3c;margin-bottom:20px;font-weight:bold}
-    table{width:100%;border-collapse:collapse;margin-top:15px;font-size:13px}
-    th{background:#3498db;color:#fff;padding:10px 8px;text-align:left;border:2px solid #333;font-weight:bold;position:sticky;top:0;z-index:10}
-    td{padding:10px 8px;border:2px solid #ddd;background:#fff;word-break:break-word}
-    tr:nth-child(even) td{background:#f8f9fa}
-    .badge{display:inline-block;padding:4px 8px;border:2px solid #333;font-weight:bold;font-size:11px;border-radius:4px;white-space:nowrap}
-    .badge-hadir{background:#17a2b8;color:#fff}
-    .badge-izin{background:#ffc107;color:#333}
-    .bg-success{background:#2ecc71;color:#fff}
-    .bg-warning{background:#f39c12;color:#333}
-    .bg-danger{background:#e74c3c;color:#fff}
-    .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .action-buttons{display:flex;gap:5px;flex-wrap:wrap}
-    .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.7);align-items:center;justify-content:center}
-    .modal.active{display:flex}
-    .modal-content{background:#fff;padding:20px;border:3px solid #333;border-radius:10px;max-width:90%;max-height:90vh;overflow:auto}
-    .modal-close{float:right;font-size:28px;font-weight:bold;cursor:pointer;line-height:20px}
-    .modal-img{max-width:100%;height:auto;display:block;margin:10px auto}
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+    
+    nav {
+      background: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .nav-brand {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+      margin-left: 8px;
+    }
+    
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    
+    .btn-logout {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .btn-logout:hover {
+      background: #c0392b;
+    }
+    
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #218838;
+    }
+    
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #c82333;
+    }
+    
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background: #138496;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 16px;
+    }
+    
+    .info-text {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    
+    th {
+      background: #667eea;
+      color: white;
+      padding: 12px 8px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid #e0e0e0;
+      vertical-align: top;
+    }
+    
+    tr:hover td {
+      background: #f8f9fa;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    
+    .badge-hadir {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    
+    .badge-izin {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .badge-danger {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    
+    .action-btns {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow: auto;
+    }
+    
+    .modal-close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 20px;
+      color: #666;
+    }
+    
+    .modal-close:hover {
+      color: #000;
+    }
+    
+    .modal-img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 16px auto;
+      border-radius: 8px;
+    }
+    
+    pre {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+      max-height: 70vh;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    
+    @media (max-width: 768px) {
+      .card {
+        padding: 16px;
+      }
+      
+      table {
+        font-size: 12px;
+      }
+      
+      th, td {
+        padding: 8px 4px;
+      }
+      
+      .btn-sm {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body>
-<nav>
-  <span class="navbar-brand">👨‍💼 Admin Dashboard</span>
-  <div class="nav-buttons">
-    <a class="btn btn-warning btn-sm" href="/admin/cleanup" onclick="return confirm('Yakin ingin membersihkan data lama dan upload ke backup?')">🗑️ Cleanup</a>
-    <a class="btn btn-outline-secondary" href="/logout">Logout</a>
-  </div>
-</nav>
-
-<div class="container">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, msg in messages %}
-        <div class="alert alert-{{ category }}">{{ msg }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-
-  <div class="card">
-    <h5>📋 Data Absensi Semua Petugas</h5>
-    <p style="color:#666;font-size:13px;margin-bottom:15px;">💡 Foto otomatis dihapus setiap ganti hari dan dibackup ke server</p>
-    <div class="table-responsive">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nama</th>
-            <th>Foto</th>
-            <th>Tanggal</th>
-            <th>Jam Datang</th>
-            <th>Jenis</th>
-            <th>Status</th>
-            <th>Keterangan</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for r in absensi %}
+  <nav>
+    <div class="nav-brand">👨‍💼 Admin Dashboard</div>
+    <button class="btn btn-logout" onclick="location.href='/logout'">Logout</button>
+  </nav>
+  
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <div class="card">
+      <h2 class="card-title">📋 Data Absensi Semua Petugas</h2>
+      <p class="info-text">Menampilkan 200 data absensi terbaru</p>
+      
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
             <tr>
-              <td>{{ r['id'] }}</td>
-              <td>{{ r['nama'] | upper }}</td>
-              <td><a href="#" class="show-image-btn" data-file="{{ '/uploads/' + r['filename'] }}">Lihat Gambar</a></td>
-              <td>{{ r['tanggal'] }}</td>
-              <td>{{ r['jam_datang'] or '-' }}</td>
-              <td>
-                {% if r['jenis'] == 'izin' %}
-                  <span class="badge badge-izin">Izin</span>
-                {% else %}
-                  <span class="badge badge-hadir">Hadir</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if r['status'] == 'Disetujui' %}
-                  <span class="badge bg-success">✓ Disetujui</span>
-                {% elif r['status'] == 'Pending' %}
-                  <span class="badge bg-warning">⏳ Pending</span>
-                {% else %}
-                  <span class="badge bg-danger">✗ Ditolak</span>
-                {% endif %}
-              </td>
-              <td style="max-width: 280px;">
-                {% if r['jenis'] == 'izin' and r['keterangan_izin'] %}
-                  <strong>Keterangan Izin:</strong><br>
-                  <em>{{ r['keterangan_izin'] }}</em>
-                  <hr style="margin:5px 0;border:1px dashed #ddd;">
-                {% endif %}
-                <small>{{ r['alasan'] or '-' }}</small>
-                {% if r['latitude'] and r['longitude'] %}
-                  <br><small style="color:#666;">📍 {{ "%.4f"|format(r['latitude']) }}, {{ "%.4f"|format(r['longitude']) }}</small>
-                {% endif %}
-              </td>
-              <td>
-                <div class="action-buttons">
-                  {% if r['status'] != 'Disetujui' %}<a href="/approve/{{ r['id'] }}" class="btn btn-success btn-sm">✓</a>{% endif %}
-                  {% if r['status'] != 'Ditolak' %}<a href="/reject/{{ r['id'] }}" class="btn btn-danger btn-sm">✗</a>{% endif %}
-                  {% if r['exif_text'] %}
-                    <button type="button" class="btn btn-info btn-sm exif-btn" data-exif='{{ r["exif_text"]|tojson }}' title="Lihat EXIF">ℹ️</button>
-                  {% endif %}
-                </div>
-              </td>
+              <th>ID</th>
+              <th>Nama</th>
+              <th>Foto</th>
+              <th>Tanggal</th>
+              <th>Jam</th>
+              <th>Jenis</th>
+              <th>Status</th>
+              <th>Keterangan</th>
+              <th>Aksi</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for r in absensi %}
+              <tr>
+                <td>{{ r['id'] }}</td>
+                <td>{{ r['nama'] | upper }}</td>
+                <td>
+                  <a href="#" class="show-image-btn" data-file="/uploads/{{ r['filename'] }}">
+                    Lihat
+                  </a>
+                </td>
+                <td>{{ r['tanggal'] }}</td>
+                <td>{{ r['jam_datang'] or '-' }}</td>
+                <td>
+                  <span class="badge badge-{{ r['jenis'] }}">
+                    {{ r['jenis']|title }}
+                  </span>
+                </td>
+                <td>
+                  {% if r['status'] == 'Disetujui' %}
+                    <span class="badge badge-success">✓ Disetujui</span>
+                  {% elif r['status'] == 'Pending' %}
+                    <span class="badge badge-warning">⏳ Pending</span>
+                  {% else %}
+                    <span class="badge badge-danger">✗ Ditolak</span>
+                  {% endif %}
+                </td>
+                <td style="max-width: 280px;">
+                  {% if r['jenis'] == 'izin' and r['keterangan_izin'] %}
+                    <strong>Keterangan Izin:</strong><br>
+                    <em>{{ r['keterangan_izin'][:60] }}{% if r['keterangan_izin']|length > 60 %}...{% endif %}</em>
+                    <hr style="margin:4px 0;border:1px dashed #ddd;">
+                  {% endif %}
+                  <small>{{ r['alasan'][:80] or '-' }}</small>
+                  {% if r['latitude'] and r['longitude'] %}
+                    <br><small style="color:#666;">📍 {{ "%.4f"|format(r['latitude']) }}, {{ "%.4f"|format(r['longitude']) }}</small>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="action-btns">
+                    {% if r['status'] != 'Disetujui' %}
+                      <a href="/approve/{{ r['id'] }}" class="btn btn-success btn-sm">✓</a>
+                    {% endif %}
+                    {% if r['status'] != 'Ditolak' %}
+                      <a href="/reject/{{ r['id'] }}" class="btn btn-danger btn-sm">✗</a>
+                    {% endif %}
+                    {% if r['exif_text'] %}
+                      <button class="btn btn-info btn-sm exif-btn" data-exif="{{ r['exif_text']|tojson }}">ℹ️</button>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
-
-<!-- Modal Gambar -->
-<div id="imageModal" class="modal">
-  <div class="modal-content">
-    <button type="button" class="modal-close" aria-label="Tutup">&times;</button>
-    <img id="modalImage" class="modal-img" src="" alt="Foto Absensi">
+  
+  <!-- Modal Gambar -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <img id="modalImage" class="modal-img" src="" alt="Foto Absensi">
+    </div>
   </div>
-</div>
-
-<!-- Modal EXIF -->
-<div id="exifModal" class="modal">
-  <div class="modal-content">
-    <button type="button" class="modal-close" aria-label="Tutup">&times;</button>
-    <h5>📄 Data EXIF</h5>
-    <pre id="exifData" style="background:#f8f9fa;padding:15px;border:2px solid #ddd;border-radius:5px;overflow:auto;max-height:70vh;font-size:12px;"></pre>
+  
+  <!-- Modal EXIF -->
+  <div id="exifModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h3>📄 Data EXIF</h3>
+      <pre id="exifData"></pre>
+    </div>
   </div>
-</div>
-
-<script src="{{ url_for('static', filename='admin.js') }}"></script>
+  
+  <script>
+    (function() {
+      const imageModal = document.getElementById('imageModal');
+      const exifModal = document.getElementById('exifModal');
+      const modalImage = document.getElementById('modalImage');
+      const exifData = document.getElementById('exifData');
+      
+      // Show image modal
+      document.querySelectorAll('.show-image-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const src = this.getAttribute('data-file');
+          if (src) {
+            modalImage.src = src;
+            imageModal.classList.add('active');
+          }
+        });
+      });
+      
+      // Show EXIF modal
+      document.querySelectorAll('.exif-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          let data = this.getAttribute('data-exif') || '';
+          try {
+            data = JSON.parse(data);
+          } catch(e) {}
+          exifData.textContent = data || '(Kosong)';
+          exifModal.classList.add('active');
+        });
+      });
+      
+      // Close modals
+      document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const modal = this.closest('.modal');
+          if (modal) {
+            modal.classList.remove('active');
+            if (modal === imageModal) modalImage.src = '';
+          }
+        });
+      });
+      
+      // Close on backdrop click
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            modal.classList.remove('active');
+            if (modal === imageModal) modalImage.src = '';
+          }
+        });
+      });
+      
+      // Close on ESC key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          if (imageModal.classList.contains('active')) {
+            imageModal.classList.remove('active');
+            modalImage.src = '';
+          }
+          if (exifModal.classList.contains('active')) {
+            exifModal.classList.remove('active');
+          }
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

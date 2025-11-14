@@ -1,152 +1,367 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Upload - Absensi Piket</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{
-      background:#fef9e7;font-family:'Roboto',sans-serif;
-      background-image:
-        repeating-linear-gradient(0deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px),
-        repeating-linear-gradient(90deg,transparent,transparent 31px,#e8dcc4 31px,#e8dcc4 32px);
-      min-height:100vh
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    nav{background:#fff;border-bottom:3px solid #333;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:3px 3px 0 rgba(0,0,0,.1);flex-wrap:wrap;gap:10px}
-    .navbar-brand{font-size:clamp(18px,4vw,24px);color:#e74c3c;font-weight:bold}
-    .btn{padding:8px 20px;border:3px solid #333;background:#fff;cursor:pointer;font-size:16px;font-weight:bold;transition:.2s;text-decoration:none;color:#333;display:inline-block}
-    .btn:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 #333}
-    .btn-outline-secondary{background:#ecf0f1}
-    .btn-success{background:#2ecc71;color:#fff}
-    .container{max-width:1200px;margin:20px auto;padding:0 15px}
-    .alert{padding:15px;margin-bottom:20px;border:3px solid #333;background:#fff9c4;font-size:16px;box-shadow:4px 4px 0 rgba(0,0,0,.1);border-radius:5px}
-    .card{background:#fff;border:3px solid #333;padding:20px;margin-bottom:25px;box-shadow:5px 5px 0 rgba(0,0,0,.1);border-radius:10px}
-    h5{font-size:clamp(20px,4vw,26px);color:#e74c3c;margin-bottom:20px;font-weight:bold}
-    .form-control{padding:12px;border:3px solid #333;background:#fff;font-size:16px;width:100%;margin-bottom:10px;border-radius:5px}
-    .form-control:focus{outline:none;background:#fffacd;border-color:#3498db}
-    .upload-info{padding:10px;background:#e8f4f8;border-left:4px solid #3498db;margin-bottom:15px;font-size:14px}
-    table{width:100%;border-collapse:collapse;margin-top:15px;font-size:14px}
-    th{background:#3498db;color:#fff;padding:12px 8px;text-align:left;border:2px solid #333;font-weight:bold}
-    td{padding:10px 8px;border:2px solid #ddd;background:#fff;word-break:break-word}
-    tr:nth-child(even) td{background:#f8f9fa}
-    .badge{display:inline-block;padding:5px 10px;border:2px solid #333;font-weight:bold;font-size:12px;border-radius:4px;white-space:nowrap}
-    .badge-hadir{background:#17a2b8;color:#fff}
-    .badge-izin{background:#ffc107;color:#333}
-    .bg-success{background:#2ecc71;color:#fff}
-    .bg-warning{background:#f39c12;color:#333}
-    .bg-danger{background:#e74c3c;color:#fff}
-    .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .submit-btn-container{margin-top:15px}
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+    
+    nav {
+      background: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .nav-brand {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    
+    .btn-logout {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .btn-logout:hover {
+      background: #c0392b;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+    
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+    
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border-left: 4px solid #ffc107;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    
+    .upload-info {
+      background: #e7f3ff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 4px solid #2196f3;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    
+    input[type="time"],
+    input[type="file"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .helper-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 8px;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .btn-outline {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+      margin-bottom: 16px;
+    }
+    
+    .btn-outline:hover {
+      background: #667eea;
+      color: white;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+    
+    th {
+      background: #667eea;
+      color: white;
+      padding: 12px 8px;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    tr:hover td {
+      background: #f8f9fa;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    
+    .badge-hadir {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    
+    .badge-izin {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .badge-danger {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    
+    @media (max-width: 768px) {
+      .card {
+        padding: 16px;
+      }
+      
+      table {
+        font-size: 12px;
+      }
+      
+      th, td {
+        padding: 8px 4px;
+      }
+    }
   </style>
 </head>
 <body>
-<nav>
-  <span class="navbar-brand">👋 Halo, {{ username | upper }}</span>
-  <div>
-    <a class="btn btn-outline-secondary" href="/logout">Logout</a>
-  </div>
-</nav>
-
-<div class="container">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, msg in messages %}
-        <div class="alert alert-{{ category }}">{{ msg }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-
-  <div class="card">
-    <h5>📸 Upload Absensi Hadir</h5>
-    <div class="upload-info">
-      📊 Upload hari ini: <strong>{{ upload_count }}/{{ max_upload }}</strong> | 
-      Sisa: <strong>{{ remaining }}</strong> kali
-    </div>
-
-    <div style="margin-bottom:12px;">
-      <a class="btn btn-outline-secondary" href="/izin">📝 Ajukan Izin (pindah ke halaman izin)</a>
-    </div>
-
-    <form method="post" action="/upload" enctype="multipart/form-data">
-      <input type="hidden" name="jenis" value="hadir">
-
-      <div class="form-group">
-        <label>⏰ Jam Datang *</label>
-        <input class="form-control" type="time" name="jam_datang" required>
-        <small style="color:#666;font-size:12px;">Wajib diisi. Contoh: 06:15</small>
+  <nav>
+    <div class="nav-brand">👋 Halo, {{ username | upper }}</div>
+    <button class="btn btn-logout" onclick="location.href='/logout'">Logout</button>
+  </nav>
+  
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <div class="card">
+      <h2 class="card-title">📸 Upload Absensi Hadir</h2>
+      
+      <div class="upload-info">
+        📊 Upload hari ini: <strong>{{ upload_count }}/{{ max_upload }}</strong> | 
+        Sisa: <strong>{{ remaining }}</strong> kali
       </div>
-
-      <div class="form-group">
-        <label>📷 Pilih Foto</label>
-        <input class="form-control" type="file" name="file" accept="image/*" required 
-               {% if remaining <= 0 %}disabled{% endif %}>
-        <small style="color:#666;font-size:12px;">ℹ️ Foto harus diambil jam 06:00-06:59 atau di lokasi sekolah</small>
-      </div>
-
-      <div class="submit-btn-container">
-        <button class="btn btn-success" type="submit" style="width:100%;" {% if remaining <= 0 %}disabled{% endif %}>
-          Upload Absensi Hadir
+      
+      <a href="/izin" class="btn-outline">📝 Ajukan Izin</a>
+      
+      <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>⏰ Jam Datang *</label>
+          <input type="time" name="jam_datang" required>
+          <div class="helper-text">Wajib diisi. Contoh: 06:15</div>
+        </div>
+        
+        <div class="form-group">
+          <label>📷 Pilih Foto *</label>
+          <input 
+            type="file" 
+            name="file" 
+            accept="image/*" 
+            required 
+            {% if remaining <= 0 %}disabled{% endif %}
+          >
+          <div class="helper-text">
+            ℹ️ Foto harus diambil jam 06:00-06:59 atau di lokasi sekolah. Max 10MB
+          </div>
+        </div>
+        
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          {% if remaining <= 0 %}disabled{% endif %}
+        >
+          Upload Absensi
         </button>
-      </div>
-    </form>
-
-    <p style="margin-top:15px;font-size:13px;color:#666;text-align:center;">
-      ℹ️ File: JPG, PNG, GIF, BMP, WEBP (Max 10MB)
-    </p>
-  </div>
-
-  <div class="card">
-    <h5>📋 Riwayat Absensi</h5>
-    <div class="table-responsive">
-      <table>
-        <thead>
-          <tr>
-            <th>File</th>
-            <th>Tanggal</th>
-            <th>Jam Datang</th>
-            <th>Jenis</th>
-            <th>Status</th>
-            <th>Keterangan</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for r in uploads %}
+      </form>
+    </div>
+    
+    <div class="card">
+      <h2 class="card-title">📋 Riwayat Absensi</h2>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
             <tr>
-              <td><a href="/uploads/{{ r['filename'] }}" target="_blank">{{ r['filename'][:30] }}...</a></td>
-              <td>{{ r['tanggal'] }}</td>
-              <td>{{ r['jam_datang'] or '-' }}</td>
-              <td>
-                {% if r['jenis'] == 'izin' %}
-                  <span class="badge badge-izin">Izin</span>
-                {% else %}
-                  <span class="badge badge-hadir">Hadir</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if r['status'] == 'Disetujui' %}
-                  <span class="badge bg-success">Disetujui</span>
-                {% elif r['status'] == 'Pending' %}
-                  <span class="badge bg-warning">Pending</span>
-                {% else %}
-                  <span class="badge bg-danger">Ditolak</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if r['jenis'] == 'izin' and r['keterangan_izin'] %}
-                  <strong>Izin:</strong> {{ r['keterangan_izin'][:50] }}{% if r['keterangan_izin']|length > 50 %}...{% endif %}
-                  <br><small style="color:#666;">{{ r['alasan'] }}</small>
-                {% else %}
-                  {{ r['alasan'] }}
-                {% endif %}
-              </td>
+              <th>File</th>
+              <th>Tanggal</th>
+              <th>Jam</th>
+              <th>Jenis</th>
+              <th>Status</th>
+              <th>Keterangan</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for r in uploads %}
+              <tr>
+                <td><a href="/uploads/{{ r['filename'] }}" target="_blank">{{ r['filename'][:20] }}...</a></td>
+                <td>{{ r['tanggal'] }}</td>
+                <td>{{ r['jam_datang'] or '-' }}</td>
+                <td>
+                  <span class="badge badge-{{ r['jenis'] }}">
+                    {{ r['jenis']|title }}
+                  </span>
+                </td>
+                <td>
+                  {% if r['status'] == 'Disetujui' %}
+                    <span class="badge badge-success">✓ Disetujui</span>
+                  {% elif r['status'] == 'Pending' %}
+                    <span class="badge badge-warning">⏳ Pending</span>
+                  {% else %}
+                    <span class="badge badge-danger">✗ Ditolak</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if r['jenis'] == 'izin' and r['keterangan_izin'] %}
+                    <strong>Izin:</strong> {{ r['keterangan_izin'][:40] }}{% if r['keterangan_izin']|length > 40 %}...{% endif %}
+                    <br><small style="color:#666;">{{ r['alasan'][:50] }}</small>
+                  {% else %}
+                    {{ r['alasan'][:60] }}{% if r['alasan']|length > 60 %}...{% endif %}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
 </body>
 </html>
